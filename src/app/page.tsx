@@ -21,10 +21,10 @@ export default function LandingPage() {
             Sign In
           </Link>
           <Link
-            href="/dashboard"
+            href="/login"
             className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl shadow-lg shadow-indigo-600/30 transition flex items-center gap-1.5"
           >
-            <span>Launch Live App</span>
+            <span>Sign In to App</span>
             <ArrowRight size={14} />
           </Link>
         </div>
@@ -46,10 +46,10 @@ export default function LandingPage() {
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
           <Link
-            href="/dashboard"
+            href="/login"
             className="w-full sm:w-auto px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl shadow-xl shadow-indigo-600/30 transition flex items-center justify-center gap-2 text-sm"
           >
-            <span>Get Started Free</span>
+            <span>Sign In to Access CRM</span>
             <ArrowRight size={16} />
           </Link>
           <Link
@@ -57,7 +57,7 @@ export default function LandingPage() {
             className="w-full sm:w-auto px-8 py-4 bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 font-bold rounded-2xl transition flex items-center justify-center gap-2 text-sm"
           >
             <ShieldCheck size={16} className="text-indigo-400" />
-            <span>Super Admin Demo</span>
+            <span>Super Admin Portal</span>
           </Link>
         </div>
       </section>
