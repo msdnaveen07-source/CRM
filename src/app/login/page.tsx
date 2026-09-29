@@ -5,7 +5,6 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useApp } from '@/context/AppContext';
 import { 
-  ShieldCheck, 
   Mail, 
   Lock, 
   ArrowRight, 
@@ -15,10 +14,10 @@ import {
   Sparkles, 
   Zap, 
   CheckCircle2, 
-  UserCheck, 
   School, 
   Briefcase,
-  AlertCircle
+  AlertCircle,
+  ShieldCheck
 } from 'lucide-react';
 import { UserRole, BusinessCategory } from '@/types';
 
@@ -34,7 +33,7 @@ interface DemoAccount {
   icon: any;
 }
 
-const DEMO_ACCOUNTS: DemoAccount[] = [
+const CLIENT_DEMO_ACCOUNTS: DemoAccount[] = [
   {
     label: 'Real Estate Admin',
     role: 'CLIENT_ADMIN',
@@ -67,21 +66,10 @@ const DEMO_ACCOUNTS: DemoAccount[] = [
     category: 'EDUCATION',
     badge: 'Education',
     icon: School
-  },
-  {
-    label: 'Super Admin HQ',
-    role: 'SUPER_ADMIN',
-    email: 'admin@leadflow.io',
-    pass: 'admin123',
-    tenantId: 'system',
-    tenantName: 'System HQ',
-    category: 'GENERAL_CRM',
-    badge: 'System Admin',
-    icon: ShieldCheck
   }
 ];
 
-export default function LoginPage() {
+export default function ClientLoginPage() {
   const router = useRouter();
   const { switchRole } = useApp();
   const [email, setEmail] = useState('');
@@ -89,15 +77,14 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedPortal, setSelectedPortal] = useState<'CLIENT' | 'ADMIN'>('CLIENT');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const executeLogin = (userRole: UserRole, tenantId: string, tenantName: string, category: BusinessCategory, targetPath: string) => {
+  const executeLogin = (userRole: UserRole, tenantId: string, tenantName: string, category: BusinessCategory) => {
     switchRole(userRole, tenantId, tenantName, category);
-    setSuccessMessage('Authentication Successful! Redirecting...');
+    setSuccessMessage('Authentication Successful! Redirecting to Workspace...');
     setTimeout(() => {
-      router.push(targetPath);
-    }, 600);
+      router.push('/dashboard');
+    }, 500);
   };
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -114,49 +101,34 @@ export default function LoginPage() {
       const data = await res.json();
 
       if (data.success && data.user) {
-        const target = data.user.role === 'SUPER_ADMIN' ? '/admin' : '/dashboard';
-        executeLogin(data.user.role, data.user.tenantId, data.user.tenantName || 'My Business', data.user.businessCategory, target);
+        executeLogin(data.user.role, data.user.tenantId, data.user.tenantName || 'My Business', data.user.businessCategory);
       } else {
-        // Fallback for user ease if testing with demo input directly
-        const matchedDemo = DEMO_ACCOUNTS.find(a => a.email.toLowerCase() === email.toLowerCase());
+        const matchedDemo = CLIENT_DEMO_ACCOUNTS.find(a => a.email.toLowerCase() === email.toLowerCase());
         if (matchedDemo) {
-          const target = matchedDemo.role === 'SUPER_ADMIN' ? '/admin' : '/dashboard';
-          executeLogin(matchedDemo.role, matchedDemo.tenantId, matchedDemo.tenantName, matchedDemo.category, target);
+          executeLogin(matchedDemo.role, matchedDemo.tenantId, matchedDemo.tenantName, matchedDemo.category);
         } else {
-          setError(data.error || 'Invalid email or password');
+          setError(data.error || 'Invalid credentials');
         }
       }
     } catch (err) {
-      // Offline / fallback handler
-      const matchedDemo = DEMO_ACCOUNTS.find(a => a.email.toLowerCase() === email.toLowerCase());
+      const matchedDemo = CLIENT_DEMO_ACCOUNTS.find(a => a.email.toLowerCase() === email.toLowerCase());
       if (matchedDemo) {
-        const target = matchedDemo.role === 'SUPER_ADMIN' ? '/admin' : '/dashboard';
-        executeLogin(matchedDemo.role, matchedDemo.tenantId, matchedDemo.tenantName, matchedDemo.category, target);
+        executeLogin(matchedDemo.role, matchedDemo.tenantId, matchedDemo.tenantName, matchedDemo.category);
       } else {
-        setError('Connection error. Please try again.');
+        setError('Connection error. Please check network.');
       }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const fillDemoAccount = (acc: DemoAccount) => {
+  const handleQuickDemoClick = (acc: DemoAccount) => {
     setEmail(acc.email);
     setPassword(acc.pass);
-    if (acc.role === 'SUPER_ADMIN') {
-      setSelectedPortal('ADMIN');
-    } else {
-      setSelectedPortal('CLIENT');
-    }
     setError('');
-  };
-
-  const handleQuickDemoClick = (acc: DemoAccount) => {
-    fillDemoAccount(acc);
     setIsLoading(true);
     setTimeout(() => {
-      const target = acc.role === 'SUPER_ADMIN' ? '/admin' : '/dashboard';
-      executeLogin(acc.role, acc.tenantId, acc.tenantName, acc.category, target);
+      executeLogin(acc.role, acc.tenantId, acc.tenantName, acc.category);
       setIsLoading(false);
     }, 400);
   };
@@ -173,7 +145,7 @@ export default function LoginPage() {
 
       <div className="w-full max-w-6xl relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         
-        {/* Left Side: Brand Showcase & Interactive Presets */}
+        {/* Left Side: Client & Team Portal Brand Presentation */}
         <div className="lg:col-span-6 space-y-8 pr-0 lg:pr-6">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-indigo-500 via-indigo-600 to-purple-500 flex items-center justify-center font-black text-2xl shadow-xl shadow-indigo-500/30 ring-1 ring-white/20">
@@ -181,25 +153,25 @@ export default function LoginPage() {
             </div>
             <div>
               <span className="font-extrabold text-2xl tracking-tight text-white">LeadFlow</span>
-              <span className="text-xs ml-2 px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-medium border border-indigo-500/30">
-                PRO 2.0
+              <span className="text-xs ml-2 px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-semibold border border-indigo-500/30">
+                CLIENT PORTAL
               </span>
             </div>
           </div>
 
           <div className="space-y-4">
             <h1 className="text-4xl sm:text-5xl font-black tracking-tight leading-tight text-white">
-              Real-Time Lead Engine <br />
+              Client & Team <br />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400">
-                Automated & Connected.
+                Workspace Login.
               </span>
             </h1>
             <p className="text-slate-400 text-sm sm:text-base leading-relaxed max-w-lg">
-              Capture leads instantly from Meta Ads, route directly to sales executives via WhatsApp, and prevent missed follow-ups with automated SLA tracking.
+              Manage incoming leads, access team dashboards, track Meta campaigns, and manage customer communications in real-time.
             </p>
           </div>
 
-          {/* Feature Highlight Pills */}
+          {/* Feature Highlight Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
             <div className="p-3.5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-md flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-400 flex items-center justify-center font-bold">
@@ -207,7 +179,7 @@ export default function LoginPage() {
               </div>
               <div>
                 <p className="text-xs font-bold text-white">Meta Webhooks</p>
-                <p className="text-[11px] text-emerald-400 font-mono">● Real-time Sync Active</p>
+                <p className="text-[11px] text-emerald-400 font-mono">● Instant Capture</p>
               </div>
             </div>
 
@@ -216,8 +188,8 @@ export default function LoginPage() {
                 <Sparkles size={18} />
               </div>
               <div>
-                <p className="text-xs font-bold text-white">10-Min SLA Engine</p>
-                <p className="text-[11px] text-indigo-400 font-mono">● Auto-escalation</p>
+                <p className="text-xs font-bold text-white">WhatsApp Integration</p>
+                <p className="text-[11px] text-indigo-400 font-mono">● Live Alerts</p>
               </div>
             </div>
           </div>
@@ -225,27 +197,27 @@ export default function LoginPage() {
           {/* One-Click Quick Demo Login Section */}
           <div className="space-y-3 pt-2">
             <div className="flex items-center justify-between text-xs font-semibold text-slate-400">
-              <span>⚡ ONE-CLICK DEMO LOGIN PRESETS</span>
-              <span className="text-indigo-400 text-[11px]">Select persona to instant log in</span>
+              <span>⚡ QUICK DEMO PERSONAS</span>
+              <span className="text-indigo-400 text-[11px]">Click to auto sign-in</span>
             </div>
-            <div className="grid grid-cols-2 gap-2.5">
-              {DEMO_ACCOUNTS.map((acc, idx) => {
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              {CLIENT_DEMO_ACCOUNTS.map((acc, idx) => {
                 const IconComponent = acc.icon;
                 return (
                   <button
                     key={idx}
                     type="button"
                     onClick={() => handleQuickDemoClick(acc)}
-                    className="p-3 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 transition duration-200 text-left group flex items-start gap-2.5 shadow-sm"
+                    className="p-3 rounded-2xl bg-slate-900/80 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/50 transition duration-200 text-left group flex flex-col gap-2 shadow-sm"
                   >
-                    <div className="w-8 h-8 rounded-xl bg-slate-800 group-hover:bg-indigo-600/20 group-hover:text-indigo-400 text-slate-400 flex items-center justify-center shrink-0 transition">
-                      <IconComponent size={16} />
+                    <div className="w-7 h-7 rounded-lg bg-slate-800 group-hover:bg-indigo-600/20 group-hover:text-indigo-400 text-slate-400 flex items-center justify-center shrink-0 transition">
+                      <IconComponent size={15} />
                     </div>
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0">
                       <div className="text-xs font-bold text-slate-200 group-hover:text-white truncate">
                         {acc.label}
                       </div>
-                      <div className="text-[10px] text-slate-500 truncate mt-0.5">
+                      <div className="text-[10px] text-slate-500 truncate">
                         {acc.tenantName}
                       </div>
                     </div>
@@ -256,57 +228,21 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Right Side: Attractive Glassmorphism Login Card */}
+        {/* Right Side: Attractive Glassmorphism Client Login Card */}
         <div className="lg:col-span-6 flex justify-center">
           <div className="w-full max-w-md bg-slate-900/80 backdrop-blur-2xl rounded-3xl p-6 sm:p-8 border border-slate-800/80 shadow-2xl ring-1 ring-white/10 space-y-6 relative overflow-hidden">
             
             {/* Ambient top highlight beam */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-[2px] bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
 
-            {/* Header / Portal Selector Tabs */}
+            {/* Header */}
             <div>
-              <div className="flex bg-slate-950/80 p-1 rounded-2xl border border-slate-800 mb-6">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedPortal('CLIENT');
-                    setEmail('vikram@apexrealestate.com');
-                    setPassword('admin123');
-                    setError('');
-                  }}
-                  className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 ${
-                    selectedPortal === 'CLIENT'
-                      ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <Building2 size={14} />
-                  <span>Client / Team Portal</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSelectedPortal('ADMIN');
-                    setEmail('admin@leadflow.io');
-                    setPassword('admin123');
-                    setError('');
-                  }}
-                  className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 ${
-                    selectedPortal === 'ADMIN'
-                      ? 'bg-slate-800 text-indigo-400 border border-indigo-500/30 shadow-md'
-                      : 'text-slate-400 hover:text-white'
-                  }`}
-                >
-                  <ShieldCheck size={14} />
-                  <span>Super Admin HQ</span>
-                </button>
+              <div className="w-10 h-10 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 text-indigo-400 flex items-center justify-center mb-3">
+                <Building2 size={20} />
               </div>
-
-              <h2 className="text-2xl font-black text-white tracking-tight">
-                {selectedPortal === 'CLIENT' ? 'Welcome Back' : 'Super Admin Sign In'}
-              </h2>
+              <h2 className="text-2xl font-black text-white tracking-tight">Client & Team Login</h2>
               <p className="text-xs text-slate-400 mt-1">
-                Enter your workspace credentials to access dashboard.
+                Enter your work credentials to access your business portal.
               </p>
             </div>
 
@@ -340,7 +276,7 @@ export default function LoginPage() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder={selectedPortal === 'CLIENT' ? 'vikram@apexrealestate.com' : 'admin@leadflow.io'}
+                    placeholder="vikram@apexrealestate.com"
                     className="w-full pl-11 pr-4 py-3 bg-slate-950/70 border border-slate-800 rounded-2xl outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 text-sm text-white placeholder-slate-600 transition"
                   />
                 </div>
@@ -404,13 +340,14 @@ export default function LoginPage() {
               </button>
             </form>
 
-            <div className="pt-2 border-t border-slate-800/80 text-center">
-              <p className="text-xs text-slate-400">
-                Don't have an account yet?{' '}
-                <Link href="/" className="text-indigo-400 font-semibold hover:underline">
-                  Back to Overview
-                </Link>
-              </p>
+            <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
+              <Link href="/" className="hover:text-white transition">
+                ← Home Overview
+              </Link>
+              <Link href="/admin/login" className="text-indigo-400 font-medium hover:underline flex items-center gap-1">
+                <ShieldCheck size={14} />
+                <span>Super Admin Login →</span>
+              </Link>
             </div>
 
           </div>
