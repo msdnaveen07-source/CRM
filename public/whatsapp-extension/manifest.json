@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "WhatsApp Bulk Sender Pro (Anti-Ban RocketSend)",
+  "version": "1.0.0",
+  "description": "Smart Bulk WhatsApp Messenger with Anti-Ban safety algorithm, Spintax, CSV variables, and Group Contact Extractor.",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://web.whatsapp.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://web.whatsapp.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["styles.css"],
+      "matches": ["https://web.whatsapp.com/*"]
+    }
+  ]
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Bulk Sender Pro</title>
+  <style>
+    :root {
+      --primary: #25D366;
+      --primary-dark: #128C7E;
+      --bg-dark: #0f172a;
+      --card-bg: #1e293b;
+      --text-light: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { width: 320px; background: var(--bg-dark); color: var(--text-light); padding: 16px; }
+
+    .header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+    .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #25D366, #128C7E); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
+    .title-area h2 { font-size: 15px; font-weight: 700; color: #25D366; }
+    .title-area p { font-size: 11px; color: var(--text-muted); }
+
+    .status-badge { display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 8px; font-size: 12px; margin-bottom: 16px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: #ef4444; }
+    .dot.active { background: var(--primary); box-shadow: 0 0 8px var(--primary); }
+
+    .action-btn { width: 100%; padding: 12px; border: none; border-radius: 8px; background: linear-gradient(135deg, #25D366, #059669); color: #000; font-weight: 700; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .feature-list { margin-top: 16px; background: var(--card-bg); border-radius: 8px; padding: 12px; }
+    .feature-item { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-muted); margin-bottom: 8px; }
+    .footer { margin-top: 14px; text-align: center; font-size: 10px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo-icon">⚡</div>
+    <div class="title-area">
+      <h2>Bulk Sender Pro</h2>
+      <p>Anti-Ban RocketSend Alternative</p>
+    </div>
+  </div>
+
+  <div class="status-badge">
+    <div id="statusDot" class="dot"></div>
+    <span id="statusText">Checking WhatsApp Web status...</span>
+  </div>
+
+  <button id="openWaBtn" class="action-btn">
+    Open WhatsApp Web Control
+  </button>
+
+  <div class="feature-list">
+    <div class="feature-item">✔ Anti-Ban Algorithm & Randomized Delays</div>
+    <div class="feature-item">✔ CSV Upload with Custom Fields ({{Name}})</div>
+    <div class="feature-item">✔ Spintax Message Generator ({Hi|Hello})</div>
+    <div class="feature-item">✔ Group Contacts Extractor</div>
+  </div>
+
+  <div class="footer">v1.0.0 • RocketSend.io Compatible</div>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id                    String    @id @default(cuid())
+  name                  String
+  email                 String
+  phone                 String?
+  businessCategory      String    @default("GENERAL_CRM")
+  plan                  String    @default("STARTER")
+  status                String    @default("ACTIVE")
+  leadLimit             Int       @default(500)
+  whatsAppNumber        String?
+  timezone              String    @default("Asia/Kolkata")
+  
+  leadCountToday        Int       @default(0)
+  leadCountMonth        Int       @default(0)
+  metaConnected         Boolean   @default(false)
+  whatsAppConnected     Boolean   @default(false)
+  lastSyncAt            DateTime?
+
+  settings              Json?
+  
+  users                 User[]
+  leads                 Lead[]
+  campaigns             Campaign[]
+  activities            LeadActivity[]
+  notes                 LeadNote[]
+  followups             Followup[]
+  metaIntegrations      MetaIntegration[]
+  whatsAppIntegrations  WhatsAppIntegration[]
+  notifications         NotificationItem[]
+  auditLogs             AuditLog[]
+  syncRuns              SyncRun[]
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+model User {
+  id                    String    @id @default(cuid())
+  tenantId              String
+  name                  String
+  email                 String    @unique
+  phone                 String?
+  password              String?   // For authentication
+  role                  String    @default("SALES_USER")
+  status                String    @default("ACTIVE")
+  
+  assignedLeadsCount    Int       @default(0)
+  contactedCount        Int       @default(0)
+  qualifiedCount        Int       @default(0)
+  wonCount              Int       @default(0)
+  avgResponseTimeSeconds Int?
+  
+  tenant                Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assignedLeads         Lead[]    @relation("LeadAssignee")
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+model Lead {
+  id                    String    @id @default(cuid())
+  tenantId              String
+  metaLeadId            String?
+  platform              String    @default("MANUAL")
+  fullName              String
+  phone                 String?
+  email                 String?
+  location              String?
+  
+  campaignId            String?
+  campaignName          String?
+  adSetId               String?
+  adSetName             String?
+  adId                  String?
+  adName                String?
+  formId                String?
+  formName              String?
+  pageId                String?
+  pageName              String?
+  
+  questionsAnswers      Json?
+  
+  assignedToId          String?
+  status                String    @default("NEW")
+  isMissed              Boolean   @default(false)
+  missedEscalationLevel String?
+  
+  firstResponseDeadline DateTime?
+  firstContactedAt      DateTime?
+  lastContactedAt       DateTime?
+  nextFollowupAt        DateTime?
+  
+  aiScore               Int?
+  aiValidationStatus    String?
+  aiValidationReason    String? @db.Text
+  
+  tenant                Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  assignedTo            User?     @relation("LeadAssignee", fields: [assignedToId], references: [id], onDelete: SetNull)
+  campaign              Campaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  activities            LeadActivity[]
+  notes                 LeadNote[]
+  followups             Followup[]
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+model Campaign {
+  id                    String    @id @default(cuid())
+  tenantId              String
+  name                  String
+  platform              String
+  status                String    @default("ACTIVE")
+  leadsCount            Int       @default(0)
+  spend                 Float     @default(0)
+  cpl                   Float     @default(0)
+  contactedCount        Int       @default(0)
+  qualifiedCount        Int       @default(0)
+  wonCount              Int       @default(0)
+  conversionRate        Float     @default(0)
+  
+  tenant                Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  leads                 Lead[]
+  
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+}
+
+model LeadActivity {
+  id          String   @id @default(cuid())
+  tenantId    String
+  leadId      String
+  actorName   String
+  type        String
+  description String   @db.Text
+  timestamp   DateTime @default(now())
+
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+}
+
+model LeadNote {
+  id          String   @id @default(cuid())
+  tenantId    String
+  leadId      String
+  authorId    String
+  authorName  String
+  content     String   @db.Text
+  createdAt   DateTime @default(now())
+
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+}
+
+model Followup {
+  id           String   @id @default(cuid())
+  tenantId     String
+  leadId       String
+  leadName     String
+  leadPhone    String
+  assignedTo   String
+  assignedName String
+  dueDate      DateTime
+  priority     String   @default("MEDIUM")
+  status       String   @default("PENDING")
+  note         String?  @db.Text
+  createdAt    DateTime @default(now())
+
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  lead         Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+}
+
+model MetaIntegration {
+  id                String   @id @default(cuid())
+  tenantId          String
+  connected         Boolean  @default(false)
+  pageId            String?
+  pageName          String?
+  adAccountId       String?
+  adAccountName     String?
+  formIds           Json?
+  lastSyncAt        DateTime @default(now())
+  webhookStatus     String   @default("HEALTHY")
+  tokenStatus       String   @default("VALID")
+  permissionsStatus String   @default("VALID")
+
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  @@unique([tenantId])
+}
+
+model WhatsAppIntegration {
+  id                      String   @id @default(cuid())
+  tenantId                String
+  connected               Boolean  @default(false)
+  phoneNumber             String
+  businessAccountId       String
+  phoneNumberId           String
+  notificationPreferences Json?
+  lastMessageSentAt       DateTime?
+  status                  String   @default("CONNECTED")
+
+  tenant                  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId])
+}
+
+model NotificationItem {
+  id        String   @id @default(cuid())
+  tenantId  String
+  userId    String?
+  title     String
+  message   String   @db.Text
+  category  String
+  read      Boolean  @default(false)
+  linkUrl   String?
+  createdAt DateTime @default(now())
+
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  tenantId  String
+  actorId   String
+  actorName String
+  actorRole String
+  action    String
+  entity    String
+  entityId  String?
+  ipAddress String?
+  metadata  Json?
+  timestamp DateTime @default(now())
+
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}
+
+model SyncRun {
+  id                String   @id @default(cuid())
+  tenantId          String
+  triggeredBy       String
+  leadsFound        Int      @default(0)
+  leadsInserted     Int      @default(0)
+  duplicatesSkipped Int      @default(0)
+  errorsCount       Int      @default(0)
+  status            String
+  errorMessage      String?  @db.Text
+  startedAt         DateTime @default(now())
+  completedAt       DateTime @default(now())
+
+  tenant            Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+}

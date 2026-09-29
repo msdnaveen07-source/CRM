@@ -1,0 +1,367 @@
+/* WhatsApp Web RocketSend/Bulk Sender Pro Drawer & Controls Styling */
+#wht-launcher-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99999;
+  background: linear-gradient(135deg, #25D366, #128C7E);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 12px 20px;
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#wht-launcher-btn:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 12px 28px rgba(37, 211, 102, 0.5);
+}
+
+#wht-launcher-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+#wht-sidebar-panel {
+  position: fixed;
+  top: 0;
+  right: -420px;
+  width: 400px;
+  height: 100vh;
+  z-index: 999999;
+  background: #0f172a;
+  color: #f8fafc;
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+  transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#wht-sidebar-panel.open {
+  right: 0;
+}
+
+.wht-header {
+  padding: 16px 20px;
+  background: #1e293b;
+  border-b: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wht-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wht-logo-badge {
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(135deg, #25D366, #10b981);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+}
+
+.wht-title-text h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.wht-title-text p {
+  font-size: 10px;
+  color: #94a3b8;
+  margin: 2px 0 0 0;
+}
+
+.wht-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+}
+
+.wht-close-btn:hover {
+  color: #fff;
+}
+
+.wht-tabs {
+  display: flex;
+  background: #0f172a;
+  border-b: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 4px 8px;
+  gap: 4px;
+}
+
+.wht-tab-btn {
+  flex: 1;
+  padding: 10px 6px;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.wht-tab-btn.active {
+  background: #1e293b;
+  color: #25D366;
+}
+
+.wht-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.wht-tab-content {
+  display: none;
+}
+
+.wht-tab-content.active {
+  display: block;
+}
+
+.wht-safety-card {
+  background: rgba(37, 211, 102, 0.08);
+  border: 1px solid rgba(37, 211, 102, 0.25);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 16px;
+}
+
+.wht-safety-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #25D366;
+}
+
+.wht-safety-desc {
+  font-size: 10px;
+  color: #cbd5e1;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+.wht-form-group {
+  margin-bottom: 16px;
+}
+
+.wht-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+}
+
+.wht-sub-label {
+  font-size: 10px;
+  color: #64748b;
+  font-weight: 400;
+}
+
+.wht-dropzone {
+  border: 2px dashed rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  background: #1e293b;
+  transition: border-color 0.2s;
+}
+
+.wht-dropzone p {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 6px;
+}
+
+.wht-textarea, .wht-input, .wht-select {
+  width: 100%;
+  background: #1e293b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  color: #fff;
+  font-size: 12px;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.wht-textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.wht-var-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.wht-pill {
+  font-size: 10px;
+  background: rgba(37, 211, 102, 0.15);
+  color: #25D366;
+  border: 1px solid rgba(37, 211, 102, 0.3);
+  padding: 3px 8px;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.wht-pill:hover {
+  background: rgba(37, 211, 102, 0.3);
+}
+
+.wht-progress-box {
+  background: #1e293b;
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 16px;
+  display: none;
+}
+
+.wht-progress-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: #0f172a;
+  border-radius: 10px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.wht-progress-bar-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #25D366, #10b981);
+  transition: width 0.3s;
+}
+
+.wht-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.wht-stat-item {
+  background: #0f172a;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.wht-stat-num {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.wht-stat-label {
+  font-size: 9px;
+  color: #64748b;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.wht-btn-group {
+  display: flex;
+  gap: 10px;
+}
+
+.wht-btn-primary {
+  flex: 1;
+  padding: 12px;
+  background: linear-gradient(135deg, #25D366, #059669);
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.wht-btn-secondary {
+  padding: 12px;
+  background: #334155;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.wht-btn-danger {
+  padding: 12px;
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.wht-log-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.wht-log-table th {
+  text-align: left;
+  padding: 8px;
+  background: #1e293b;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.wht-log-table td {
+  padding: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+}
+
+.wht-badge-success {
+  color: #25D366;
+  font-weight: 700;
+}
+
+.wht-badge-failed {
+  color: #ef4444;
+  font-weight: 700;
+}
