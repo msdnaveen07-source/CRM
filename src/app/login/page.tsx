@@ -57,7 +57,7 @@ const CLIENT_DEMO_ACCOUNTS: DemoAccount[] = [
     icon: Briefcase
   },
   {
-    label: 'Education Portal',
+    label: 'Education Portal (Teacher)',
     role: 'TEACHER',
     email: 'anitha@oxfordedu.in',
     pass: 'teacher123',
@@ -66,6 +66,17 @@ const CLIENT_DEMO_ACCOUNTS: DemoAccount[] = [
     category: 'EDUCATION',
     badge: 'Education',
     icon: School
+  },
+  {
+    label: 'School Admin (Principal)',
+    role: 'CLIENT_ADMIN',
+    email: 'principal@oxfordedu.in',
+    pass: 'admin123',
+    tenantId: 'tenant-104',
+    tenantName: 'Oxford International',
+    category: 'EDUCATION',
+    badge: 'Admin',
+    icon: Building2
   }
 ];
 

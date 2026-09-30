@@ -270,6 +270,74 @@ export default function SuperAdminPage() {
         </div>
       </div>
 
+      {/* SaaS Financial & Revenue Analytics */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-gradient-to-r from-emerald-900 via-slate-900 to-teal-950 p-6 rounded-2xl text-white shadow-xl space-y-4 border border-emerald-800/40 md:col-span-2">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-bold text-white flex items-center gap-2">
+              <Activity size={16} className="text-emerald-400" />
+              SaaS Revenue &amp; Growth Metrics
+            </h2>
+            <span className="px-2 py-0.5 rounded text-[9px] bg-emerald-500/20 text-emerald-400 font-extrabold tracking-widest uppercase">
+              Live MRR
+            </span>
+          </div>
+
+          <div className="grid grid-cols-3 gap-4 pt-2">
+            <div className="p-4 rounded-xl bg-black/20 border border-white/5">
+              <span className="text-xs text-slate-400 block uppercase font-bold tracking-wider">Total MRR</span>
+              <span className="text-2xl font-bold text-white mt-1 block">$12,450</span>
+              <span className="text-[10px] text-emerald-400 font-medium">+15% vs last month</span>
+            </div>
+
+            <div className="p-4 rounded-xl bg-black/20 border border-white/5">
+              <span className="text-xs text-slate-400 block uppercase font-bold tracking-wider">Avg Rev Per User</span>
+              <span className="text-2xl font-bold text-emerald-400 mt-1 block">$149</span>
+              <span className="text-[10px] text-slate-400">Stable</span>
+            </div>
+
+            <div className="p-4 rounded-xl bg-black/20 border border-white/5">
+              <span className="text-xs text-slate-400 block uppercase font-bold tracking-wider">Gemini API Cost</span>
+              <span className="text-2xl font-bold text-rose-400 mt-1 block">$42.50</span>
+              <span className="text-[10px] text-rose-400 font-medium">320K requests</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+          <h2 className="text-sm font-bold text-slate-900 dark:text-white">Plan Distribution</h2>
+          <div className="space-y-4 pt-2">
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="font-bold text-slate-700 dark:text-slate-300">Enterprise ($299/m)</span>
+                <span className="text-slate-500">12 Clients</span>
+              </div>
+              <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2">
+                <div className="bg-indigo-600 h-2 rounded-full" style={{ width: '40%' }}></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="font-bold text-slate-700 dark:text-slate-300">Pro ($149/m)</span>
+                <span className="text-slate-500">45 Clients</span>
+              </div>
+              <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2">
+                <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '70%' }}></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between text-xs mb-1">
+                <span className="font-bold text-slate-700 dark:text-slate-300">Starter ($49/m)</span>
+                <span className="text-slate-500">28 Clients</span>
+              </div>
+              <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2">
+                <div className="bg-amber-500 h-2 rounded-full" style={{ width: '35%' }}></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Client Management Table */}
       <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
         <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-4">

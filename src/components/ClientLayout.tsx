@@ -7,6 +7,8 @@ import { Sidebar } from '@/components/Sidebar';
 import { Header } from '@/components/Header';
 import { CommandPalette } from '@/components/CommandPalette';
 
+import { AiControlWidget } from '@/components/AiControlWidget';
+
 function MainLayoutContent({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isLandingPage = pathname === '/';
@@ -25,6 +27,7 @@ function MainLayoutContent({ children }: { children: React.ReactNode }) {
         <main className="flex-1 p-6 md:p-8 max-w-7xl w-full mx-auto">{children}</main>
       </div>
       <CommandPalette />
+      <AiControlWidget />
     </div>
   );
 }

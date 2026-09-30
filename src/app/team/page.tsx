@@ -36,44 +36,26 @@ interface SalesExec {
 
 export default function TeamMembersPage() {
   const { user, switchRole } = useApp();
-  const [team, setTeam] = useState<SalesExec[]>([
-    {
-      id: 'user-sales-1',
-      name: 'Rohan Verma',
-      email: 'rohan@apexrealestate.com',
-      phone: '+91 98401 11223',
-      role: 'SALES_USER',
-      status: 'ACTIVE',
-      assignedLeadsCount: 14,
-      contactedCount: 12,
-      wonCount: 4,
-      avgResponseTimeSeconds: 245 // ~4 mins
-    },
-    {
-      id: 'user-sales-2',
-      name: 'Priya Sundaram',
-      email: 'priya@apexrealestate.com',
-      phone: '+91 98402 33445',
-      role: 'SALES_USER',
-      status: 'ACTIVE',
-      assignedLeadsCount: 10,
-      contactedCount: 9,
-      wonCount: 3,
-      avgResponseTimeSeconds: 320 // ~5.3 mins
-    },
-    {
-      id: 'user-sales-3',
-      name: 'Karthik Raja',
-      email: 'karthik@apexrealestate.com',
-      phone: '+91 98403 55667',
-      role: 'SALES_MANAGER',
-      status: 'ACTIVE',
-      assignedLeadsCount: 8,
-      contactedCount: 8,
-      wonCount: 5,
-      avgResponseTimeSeconds: 180 // ~3 mins
+  const [team, setTeam] = useState<SalesExec[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchTeam = async () => {
+    try {
+      const res = await fetch(`/api/team?tenantId=${user.tenantId}`);
+      const data = await res.json();
+      if (data.success) {
+        setTeam(data.team);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoading(false);
     }
-  ]);
+  };
+
+  useEffect(() => {
+    fetchTeam();
+  }, [user.tenantId]);
 
   const [autoAssignEnabled, setAutoAssignEnabled] = useState(true);
   const [assignmentStrategy, setAssignmentStrategy] = useState<'ROUND_ROBIN' | 'MANUAL'>('ROUND_ROBIN');
@@ -87,33 +69,44 @@ export default function TeamMembersPage() {
   const [role, setRole] = useState<'SALES_USER' | 'SALES_MANAGER'>('SALES_USER');
   const [successMsg, setSuccessMsg] = useState('');
 
-  const handleCreateSalesUser = (e: React.FormEvent) => {
+  const handleCreateSalesUser = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !email) return;
 
-    const newExec: SalesExec = {
-      id: `user-sales-${Date.now()}`,
-      name,
-      email,
-      phone: phone || '+91 98400 00000',
-      role,
-      status: 'ACTIVE',
-      assignedLeadsCount: 0,
-      contactedCount: 0,
-      wonCount: 0,
-      avgResponseTimeSeconds: 300
-    };
+    try {
+      const res = await fetch('/api/team', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tenantId: user.tenantId,
+          name,
+          email,
+          password,
+          phone: phone || '',
+          role,
+          status: 'ACTIVE'
+        })
+      });
 
-    setTeam([newExec, ...team]);
-    setSuccessMsg(`Sales login for ${name} created successfully! Credentials sent.`);
-    setTimeout(() => {
-      setModalOpen(false);
-      setName('');
-      setEmail('');
-      setPassword('');
-      setPhone('');
-      setSuccessMsg('');
-    }, 1200);
+      const data = await res.json();
+      if (data.success) {
+        setTeam([data.user, ...team]);
+        setSuccessMsg(`Sales login for ${name} created successfully!`);
+        setTimeout(() => {
+          setModalOpen(false);
+          setName('');
+          setEmail('');
+          setPassword('');
+          setPhone('');
+          setSuccessMsg('');
+        }, 1500);
+      } else {
+        alert(data.error || 'Failed to create user');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Error connecting to server');
+    }
   };
 
   const toggleUserStatus = (id: string) => {
@@ -129,7 +122,7 @@ export default function TeamMembersPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">
-              REAL ESTATE SALES TEAM
+              {user.tenantName || 'YOUR BUSINESS'} TEAM
             </span>
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400">
               ROUND-ROBIN AUTO ASSIGNMENT
@@ -139,7 +132,7 @@ export default function TeamMembersPage() {
             Sales Team Login &amp; Auto-Assignment Engine
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Create logins for sales executives. Website and Meta leads will automatically get assigned via Round-Robin.
+            Create logins for your sales executives. Incoming leads will automatically get assigned to them.
           </p>
         </div>
 
@@ -243,10 +236,10 @@ export default function TeamMembersPage() {
                   </td>
                   <td className="py-3.5 px-4 text-right">
                     <button
-                      onClick={() => switchRole('SALES_USER', 'tenant-101', 'Apex Real Estate', 'REAL_ESTATE')}
+                      onClick={() => switchRole(exec.role, user.tenantId, user.tenantName || '', 'GENERAL_CRM')}
                       className="px-3 py-1.5 bg-slate-900 dark:bg-indigo-600 hover:bg-slate-800 text-white rounded-lg text-[11px] font-bold transition inline-flex items-center gap-1"
                     >
-                      <span>Login as Executive</span>
+                      <span>Login as User</span>
                       <ArrowRight size={13} />
                     </button>
                   </td>
@@ -264,7 +257,7 @@ export default function TeamMembersPage() {
             <div className="flex justify-between items-center border-b border-slate-100 dark:border-slate-800 pb-3">
               <div>
                 <span className="text-[10px] font-extrabold uppercase bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 px-2.5 py-0.5 rounded-full">
-                  REAL ESTATE ADMIN
+                  {user.tenantName || 'YOUR BUSINESS'} ADMIN
                 </span>
                 <h3 className="text-lg font-bold text-slate-900 dark:text-white mt-1">
                   Create Sales Executive Login
@@ -308,7 +301,7 @@ export default function TeamMembersPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="rohan@apexrealestate.com"
+                  placeholder="employee@yourbusiness.com"
                   className="w-full p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white outline-none focus:border-indigo-500 font-mono"
                 />
               </div>

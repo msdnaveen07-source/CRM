@@ -22,7 +22,7 @@ import {
 } from 'lucide-react';
 
 export default function WhatsAppHubPage() {
-  const [activeTab, setActiveTab] = useState<'CREATE_TEMPLATE' | 'CREATE_CAMPAIGN' | 'CONTACTS' | 'INBOX'>('CREATE_TEMPLATE');
+  const [activeTab, setActiveTab] = useState<'CREATE_TEMPLATE' | 'CREATE_CAMPAIGN' | 'CONTACTS' | 'INBOX' | 'AI_BOT'>('CREATE_TEMPLATE');
 
   // --- 1. CREATE TEMPLATE STATE ---
   const [templateName, setTemplateName] = useState('appointment_reminder_v1');
@@ -154,6 +154,16 @@ export default function WhatsAppHubPage() {
             }`}
           >
             Live Inbox
+          </button>
+          <button
+            onClick={() => setActiveTab('AI_BOT')}
+            className={`px-4 py-2 rounded-lg transition ${
+              activeTab === 'AI_BOT'
+                ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm font-bold border border-indigo-200 dark:border-indigo-800'
+                : 'text-indigo-600/70 dark:text-indigo-400/70 hover:text-indigo-600 dark:hover:text-indigo-400 font-semibold flex items-center gap-1.5'
+            }`}
+          >
+            <Sparkles size={14} /> AI Auto-Responder
           </button>
         </div>
       </div>
@@ -396,6 +406,75 @@ export default function WhatsAppHubPage() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================= */}
+      {/* AI BOT SETTINGS SCREEN */}
+      {/* ========================================================= */}
+      {activeTab === 'AI_BOT' && (
+        <div className="max-w-4xl mx-auto space-y-6">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+              <Sparkles size={20} />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-slate-900 dark:text-white">AI WhatsApp Assistant Settings</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Configure your AI bot to handle common parent queries, fees queries, and lead FAQs automatically 24/7.</p>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6 text-xs">
+            
+            <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700">
+              <div>
+                <h3 className="font-bold text-sm text-slate-900 dark:text-white">Enable AI Auto-Responder</h3>
+                <p className="text-slate-500 mt-1">When enabled, the AI will intercept inbound WhatsApp messages and attempt to resolve them before routing to a human agent.</p>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" className="sr-only peer" defaultChecked />
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-600 peer-checked:bg-indigo-600"></div>
+              </label>
+            </div>
+
+            <div>
+              <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-2">AI Knowledge Base (Rules &amp; Guidelines)</label>
+              <textarea
+                rows={8}
+                defaultValue={"1. You are the AI Assistant for this business.\n2. If parents ask about fees, kindly refer them to the parent portal link.\n3. If they ask about holidays, check the school calendar.\n4. Always be extremely polite and professional.\n5. If the query is complex or involves a complaint, say: 'I am routing you to our administration team.'"}
+                className="w-full p-4 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 outline-none text-slate-900 dark:text-white font-mono text-[11px] focus:border-indigo-500 leading-relaxed"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Human Handoff Trigger Words</label>
+                <input
+                  type="text"
+                  defaultValue="human, complaint, manager, urgent, call, emergency"
+                  className="w-full p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 outline-none text-slate-900 dark:text-white"
+                />
+              </div>
+              <div>
+                <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Fallback Message (Off-hours)</label>
+                <input
+                  type="text"
+                  defaultValue="Our team is currently offline. Your message is recorded."
+                  className="w-full p-3 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 outline-none text-slate-900 dark:text-white"
+                />
+              </div>
+            </div>
+
+            <div className="pt-4 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => showToast('AI Assistant Settings saved successfully!')}
+                className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 flex items-center gap-2 transition text-sm"
+              >
+                Save AI Configuration
+              </button>
             </div>
           </div>
         </div>

@@ -19,7 +19,8 @@ import {
   CalendarCheck,
   BookOpen,
   Building2,
-  Award
+  Award,
+  Bot
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -27,6 +28,7 @@ export default function ClientDashboardPage() {
   const { user, switchRole } = useApp();
   const [metrics, setMetrics] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [aiFollowupEnabled, setAiFollowupEnabled] = useState(false);
 
   // Education category specific state
   const [studentAttendance, setStudentAttendance] = useState([
@@ -123,61 +125,228 @@ export default function ClientDashboardPage() {
             </div>
 
             <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
-              <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Campus Visits</p>
-              <p className="text-2xl font-bold text-amber-600 dark:text-amber-400 mt-2">12</p>
-              <span className="text-[11px] text-amber-600 font-medium mt-1 block">Scheduled Today</span>
-            </div>
-
-            <div className="bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800">
-              <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Confirmed Fees</p>
-              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 mt-2">₹14.2L</p>
-              <span className="text-[11px] text-emerald-600 font-medium mt-1 block">Collected Today</span>
+              <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">Total Fees Pending</p>
+              <p className="text-2xl font-bold text-rose-600 dark:text-rose-400 mt-2">₹18.4L</p>
+              <span className="text-[11px] text-rose-600 font-medium mt-1 flex items-center gap-1">
+                <AlertTriangle size={12} /> 124 Students Defaulted
+              </span>
             </div>
           </div>
 
-          {/* Education Sub-Portals: Teachers, Students & Attendance Database */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            {/* Student Attendance Database Table */}
-            <div className="lg:col-span-8 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
-              <div className="flex justify-between items-center">
+          {/* AI Smart Fee Recovery & Parent Communication Engine */}
+          <div className="bg-gradient-to-r from-rose-950 via-slate-900 to-indigo-950 p-6 rounded-2xl text-white shadow-xl space-y-4 border border-rose-800/40">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-rose-500/20 border border-rose-400/30 flex items-center justify-center shrink-0">
+                  <MessageSquare className="text-amber-400" size={24} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-white flex items-center gap-2">
+                    AI Auto-Fee Reminder &amp; Recovery Engine
+                    <span className="px-2 py-0.5 rounded text-[9px] bg-emerald-500/20 text-emerald-400 font-extrabold tracking-widest uppercase">
+                      Active
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-300 mt-1 max-w-2xl">
+                    Automatically scans the defaulters list and sends personalized, polite WhatsApp fee reminders with payment links to parents 3 days before the due date and on overdue dates.
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => alert('Sending bulk WhatsApp fee reminders to 124 parents now...')}
+                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow-lg transition"
+              >
+                <Zap size={14} /> Send Smart Alerts Now
+              </button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-white/10 mt-2">
+              <div className="p-3 bg-black/20 rounded-xl border border-white/5">
+                <p className="text-[10px] text-slate-400 font-bold uppercase">Automated Reminders Sent</p>
+                <p className="text-lg font-bold text-white mt-0.5">342 This Month</p>
+              </div>
+              <div className="p-3 bg-black/20 rounded-xl border border-white/5">
+                <p className="text-[10px] text-slate-400 font-bold uppercase">Fees Recovered via WhatsApp</p>
+                <p className="text-lg font-bold text-emerald-400 mt-0.5">₹5.2 Lakhs</p>
+              </div>
+              <div className="p-3 bg-black/20 rounded-xl border border-white/5">
+                <p className="text-[10px] text-slate-400 font-bold uppercase">Parents Unreachable</p>
+                <p className="text-lg font-bold text-rose-400 mt-0.5">8 Numbers Invalid</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Student Fee Defaulters List */}
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-rose-200 dark:border-rose-900/50 shadow-sm space-y-4">
+            <div className="flex justify-between items-center">
+              <div>
                 <h3 className="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
-                  <CalendarCheck size={18} className="text-indigo-600" />
-                  Student Attendance Database &amp; Daily Log
+                  <AlertTriangle size={18} className="text-rose-600" />
+                  Action Required: Student Fee Defaulters
                 </h3>
-                <span className="text-xs text-slate-400 font-mono">Date: Sept 28, 2026</span>
+                <p className="text-[11px] text-slate-500 mt-0.5">List of students with pending fees categorized by grade.</p>
+              </div>
+              <button 
+                onClick={() => alert('Opening full list of 124 defaulters... (This would open a detailed table/modal)')}
+                className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-900/30 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition"
+              >
+                View All 124 Defaulters
+              </button>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-rose-50 dark:bg-rose-950/20 font-semibold text-slate-600 dark:text-slate-400 border-b border-rose-100 dark:border-rose-900/30">
+                  <tr>
+                    <th className="py-3 px-4">Student Name</th>
+                    <th className="py-3 px-4">Grade / Section</th>
+                    <th className="py-3 px-4">Pending Amount</th>
+                    <th className="py-3 px-4">Due Date</th>
+                    <th className="py-3 px-4 text-right">Action</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  <tr className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+                    <td className="py-3 px-4 font-bold text-slate-900 dark:text-white">Arun Kumar</td>
+                    <td className="py-3 px-4 font-medium text-slate-500">Grade 10 - A</td>
+                    <td className="py-3 px-4 font-bold text-rose-600">₹ 45,000</td>
+                    <td className="py-3 px-4 text-slate-500">15 Aug, 2026</td>
+                    <td className="py-3 px-4 text-right">
+                      <button 
+                        onClick={() => alert('Sending automated WhatsApp fee reminder to Sneha Reddy...')}
+                        className="px-3 py-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 rounded flex items-center justify-end gap-1 font-semibold hover:bg-emerald-200 transition ml-auto"
+                      >
+                        <MessageSquare size={12} /> Send Alert
+                      </button>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+                    <td className="py-3 px-4 font-bold text-slate-900 dark:text-white">Sneha Reddy</td>
+                    <td className="py-3 px-4 font-medium text-slate-500">Grade 8 - C</td>
+                    <td className="py-3 px-4 font-bold text-rose-600">₹ 32,500</td>
+                    <td className="py-3 px-4 text-slate-500">01 Sep, 2026</td>
+                    <td className="py-3 px-4 text-right">
+                      <button 
+                        onClick={() => alert('Sending automated WhatsApp fee reminder to Karthik M...')}
+                        className="px-3 py-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 rounded flex items-center justify-end gap-1 font-semibold hover:bg-emerald-200 transition ml-auto"
+                      >
+                        <MessageSquare size={12} /> Send Alert
+                      </button>
+                    </td>
+                  </tr>
+                  <tr className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+                    <td className="py-3 px-4 font-bold text-slate-900 dark:text-white">Karthik M.</td>
+                    <td className="py-3 px-4 font-medium text-slate-500">Grade 12 - Sci</td>
+                    <td className="py-3 px-4 font-bold text-rose-600">₹ 60,000</td>
+                    <td className="py-3 px-4 text-slate-500">10 Sep, 2026</td>
+                    <td className="py-3 px-4 text-right">
+                      <button className="px-3 py-1 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 rounded flex items-center justify-end gap-1 font-semibold hover:bg-emerald-200 transition ml-auto">
+                        <MessageSquare size={12} /> Send Alert
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Education Sub-Portals & Grade-wise Attendance */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            {/* Grade-wise Student & Teacher Attendance */}
+            <div className="lg:col-span-8 space-y-6">
+              
+              {/* Grade-wise Student Attendance */}
+              <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                    <CalendarCheck size={18} className="text-indigo-600" />
+                    Grade-wise Student Attendance
+                  </h3>
+                  <span className="text-xs text-slate-400 font-mono">Date: Sept 28, 2026</span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <p className="font-bold text-slate-900 dark:text-white">Grade 10</p>
+                    <div className="flex items-end justify-between mt-2">
+                      <span className="text-xl font-bold text-emerald-600">96%</span>
+                      <span className="text-[10px] text-slate-400">142/148</span>
+                    </div>
+                  </div>
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <p className="font-bold text-slate-900 dark:text-white">Grade 9</p>
+                    <div className="flex items-end justify-between mt-2">
+                      <span className="text-xl font-bold text-emerald-600">92%</span>
+                      <span className="text-[10px] text-slate-400">138/150</span>
+                    </div>
+                  </div>
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <p className="font-bold text-slate-900 dark:text-white">Grade 8</p>
+                    <div className="flex items-end justify-between mt-2">
+                      <span className="text-xl font-bold text-amber-500">88%</span>
+                      <span className="text-[10px] text-slate-400">110/125</span>
+                    </div>
+                  </div>
+                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <p className="font-bold text-slate-900 dark:text-white">Grade 7</p>
+                    <div className="flex items-end justify-between mt-2">
+                      <span className="text-xl font-bold text-emerald-600">98%</span>
+                      <span className="text-[10px] text-slate-400">145/148</span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="bg-slate-50 dark:bg-slate-800/60 font-semibold text-slate-500 border-b border-slate-200 dark:border-slate-800">
-                    <tr>
-                      <th className="py-3 px-4">Student Name</th>
-                      <th className="py-3 px-4">Class / Batch</th>
-                      <th className="py-3 px-4">Punch In Time</th>
-                      <th className="py-3 px-4 text-right">Attendance Status</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
-                    {studentAttendance.map((st) => (
-                      <tr key={st.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
-                        <td className="py-3 px-4 font-bold text-slate-900 dark:text-white">{st.name}</td>
-                        <td className="py-3 px-4 font-medium text-slate-500">{st.class}</td>
-                        <td className="py-3 px-4 font-mono">{st.time}</td>
+              {/* Teacher Attendance Tracking */}
+              <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 space-y-4">
+                <div className="flex justify-between items-center">
+                  <h3 className="font-bold text-slate-900 dark:text-white text-sm flex items-center gap-2">
+                    <Users size={18} className="text-emerald-600" />
+                    Teacher &amp; Faculty Live Attendance
+                  </h3>
+                  <span className="text-xs font-bold text-emerald-600 bg-emerald-50 dark:bg-emerald-950 px-3 py-1 rounded-full">
+                    42 / 45 Present Today
+                  </span>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-slate-50 dark:bg-slate-800/60 font-semibold text-slate-500 border-b border-slate-200 dark:border-slate-800">
+                      <tr>
+                        <th className="py-3 px-4">Faculty Name</th>
+                        <th className="py-3 px-4">Department</th>
+                        <th className="py-3 px-4">Punch In Time</th>
+                        <th className="py-3 px-4 text-right">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                      <tr className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+                        <td className="py-3 px-4 font-bold text-slate-900 dark:text-white">Mrs. Anitha S.</td>
+                        <td className="py-3 px-4 text-slate-500">Mathematics</td>
+                        <td className="py-3 px-4 font-mono">07:45 AM</td>
                         <td className="py-3 px-4 text-right">
-                          <span
-                            className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
-                              st.status === 'PRESENT'
-                                ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-600'
-                                : 'bg-rose-100 dark:bg-rose-950 text-rose-600'
-                            }`}
-                          >
-                            {st.status}
-                          </span>
+                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-600">PRESENT</span>
                         </td>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                      <tr className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+                        <td className="py-3 px-4 font-bold text-slate-900 dark:text-white">Mr. Rajesh K.</td>
+                        <td className="py-3 px-4 text-slate-500">Physics</td>
+                        <td className="py-3 px-4 font-mono">07:50 AM</td>
+                        <td className="py-3 px-4 text-right">
+                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950 text-emerald-600">PRESENT</span>
+                        </td>
+                      </tr>
+                      <tr className="hover:bg-slate-50/80 dark:hover:bg-slate-800/40">
+                        <td className="py-3 px-4 font-bold text-slate-900 dark:text-white">Ms. Priya M.</td>
+                        <td className="py-3 px-4 text-slate-500">English</td>
+                        <td className="py-3 px-4 font-mono">-</td>
+                        <td className="py-3 px-4 text-right">
+                          <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-rose-100 dark:bg-rose-950 text-rose-600">ON LEAVE</span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
 
@@ -329,6 +498,59 @@ export default function ClientDashboardPage() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* AI Smart Auto-Recovery Engine (Problem Solving Feature) */}
+          <div className="bg-gradient-to-r from-indigo-900 via-slate-900 to-purple-950 p-6 rounded-2xl text-white shadow-xl space-y-4 border border-indigo-800/40">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-indigo-500/20 border border-indigo-400/30 flex items-center justify-center shrink-0">
+                  <Bot className="text-amber-400" size={24} />
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-white flex items-center gap-2">
+                    AI Smart Auto-Followup Engine
+                    <span className="px-2 py-0.5 rounded text-[9px] bg-emerald-500/20 text-emerald-400 font-extrabold tracking-widest uppercase">
+                      New
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-300 mt-1 max-w-2xl">
+                    Solves lead leakage by automatically sending a smart WhatsApp message to leads untouched for 2+ days. Re-engages them and notifies the assigned sales executive.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 bg-white/10 p-2.5 rounded-xl border border-white/15">
+                <span className="text-xs font-bold whitespace-nowrap">Engine Status:</span>
+                <button
+                  onClick={() => setAiFollowupEnabled(!aiFollowupEnabled)}
+                  className={`px-4 py-1.5 rounded-lg text-xs font-extrabold transition whitespace-nowrap ${
+                    aiFollowupEnabled
+                      ? 'bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm'
+                      : 'bg-slate-700 hover:bg-slate-600 text-slate-300'
+                  }`}
+                >
+                  {aiFollowupEnabled ? 'ENABLED (ACTIVE)' : 'DISABLED'}
+                </button>
+              </div>
+            </div>
+
+            {aiFollowupEnabled && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-white/10 mt-2">
+                <div className="p-3 bg-black/20 rounded-xl border border-white/5">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase">Leads Re-engaged</p>
+                  <p className="text-lg font-bold text-white mt-0.5">14</p>
+                </div>
+                <div className="p-3 bg-black/20 rounded-xl border border-white/5">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase">Revenue Saved (Est)</p>
+                  <p className="text-lg font-bold text-emerald-400 mt-0.5">₹24.5 {category === 'REAL_ESTATE' ? 'Lakhs' : 'K'}</p>
+                </div>
+                <div className="p-3 bg-black/20 rounded-xl border border-white/5">
+                  <p className="text-[10px] text-slate-400 font-bold uppercase">Next Batch Trigger</p>
+                  <p className="text-lg font-bold text-amber-400 mt-0.5">Today, 6:00 PM</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

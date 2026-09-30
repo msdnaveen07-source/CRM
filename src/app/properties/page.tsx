@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useApp } from '@/context/AppContext';
 import {
   Building2,
   Home,
@@ -28,9 +29,20 @@ interface PropertyUnit {
 }
 
 export default function PropertiesPage() {
-  const [selectedProject, setSelectedProject] = useState('Apex Luxury Palms');
+  const { user } = useApp();
+  const category = user.businessCategory || 'GENERAL_CRM';
+  
+  const [selectedProject, setSelectedProject] = useState('ALL');
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
+
+  // Generic Label mapping
+  const labels = {
+    REAL_ESTATE: { module: 'REAL ESTATE CRM', title: 'Property Listings', entity: 'Unit', measure: 'Sq.Ft', price: 'Lakhs', addBtn: 'Add Property Unit' },
+    EDUCATION: { module: 'EDUCATION CRM', title: 'Courses & Programs', entity: 'Course', measure: 'Duration', price: 'Fees', addBtn: 'Add Course' },
+    GENERAL_CRM: { module: 'SALES CRM', title: 'Products / Services', entity: 'Item', measure: 'SKU/Code', price: 'Price', addBtn: 'Add Item' }
+  }[category as 'REAL_ESTATE' | 'EDUCATION' | 'GENERAL_CRM'] || { module: 'CRM', title: 'Catalog', entity: 'Item', measure: 'Details', price: 'Price', addBtn: 'Add Item' };
+
 
   const [units, setUnits] = useState<PropertyUnit[]>([
     { id: 'u-101', projectName: 'Apex Luxury Palms', unitNo: 'Villa 12-A', type: 'VILLA', sqft: 3400, priceLakhs: 185, status: 'AVAILABLE', floor: 'G+2', facing: 'East' },
@@ -59,26 +71,26 @@ export default function PropertiesPage() {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">
-              REAL ESTATE CRM MODULE
+              {labels.module}
             </span>
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider uppercase bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-400">
-              PROPERTY INVENTORY CATALOG
+              INVENTORY CATALOG
             </span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">
-            Property Listings &amp; Inventory Status
+            {labels.title} &amp; Inventory Status
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            Track available villas, apartment units, pricing, floor plans, and live unit booking statuses.
+            Track available {labels.entity.toLowerCase()}s, pricing, details, and live booking statuses.
           </p>
         </div>
 
         <button
-          onClick={() => alert('Add Property Unit modal triggered!')}
+          onClick={() => alert(`${labels.addBtn} modal triggered!`)}
           className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs shadow-md transition"
         >
           <Plus size={16} />
-          <span>Add Property Unit</span>
+          <span>{labels.addBtn}</span>
         </button>
       </div>
 
@@ -141,7 +153,7 @@ export default function PropertiesPage() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search villa or unit number..."
+              placeholder={`Search ${labels.entity.toLowerCase()}...`}
               className="w-full pl-9 pr-4 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs outline-none focus:border-indigo-500 text-slate-900 dark:text-white"
             />
           </div>
@@ -177,22 +189,22 @@ export default function PropertiesPage() {
 
               <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-100 dark:border-slate-800">
                 <div>
-                  <span className="text-slate-400 block text-[10px] uppercase font-bold">Built-up Area</span>
-                  <span className="font-bold text-slate-900 dark:text-white font-mono">{unit.sqft} Sq.Ft</span>
+                  <span className="text-slate-400 block text-[10px] uppercase font-bold">{labels.measure}</span>
+                  <span className="font-bold text-slate-900 dark:text-white font-mono">{category === 'REAL_ESTATE' ? `${unit.sqft} Sq.Ft` : `Detail: ${unit.sqft}`}</span>
                 </div>
                 <div>
                   <span className="text-slate-400 block text-[10px] uppercase font-bold">Listing Price</span>
-                  <span className="font-extrabold text-indigo-600 dark:text-indigo-400 font-mono">₹{unit.priceLakhs} Lakhs</span>
+                  <span className="font-extrabold text-indigo-600 dark:text-indigo-400 font-mono">₹{unit.priceLakhs} {labels.price}</span>
                 </div>
               </div>
 
               <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
                 <button
-                  onClick={() => alert(`Property brochure & floor plan sent to buyer on WhatsApp for ${unit.unitNo}!`)}
+                  onClick={() => alert(`Details sent to buyer on WhatsApp for ${unit.unitNo}!`)}
                   className="w-full flex items-center justify-center gap-1.5 py-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 rounded-xl text-xs font-bold transition"
                 >
                   <Share2 size={14} className="text-emerald-500" />
-                  <span>Share Floor Plan via WhatsApp</span>
+                  <span>Share via WhatsApp</span>
                 </button>
               </div>
             </div>

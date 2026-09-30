@@ -1,6 +1,49 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { getAuthSession, scopeTenantQuery } from '@/lib/auth';
+import { GoogleGenerativeAI } from '@google/generative-ai';
+
+async function evaluateLeadQuality(leadData: any, businessCategory: string = "GENERAL_CRM") {
+  try {
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) return null;
+    
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+
+    const prompt = `
+You are an expert AI assistant for a ${businessCategory.replace('_', ' ')} business. Evaluate the following lead data and return a JSON object scoring the lead.
+
+Lead Data:
+Name: ${leadData.fullName}
+Email: ${leadData.email}
+Phone: ${leadData.phone}
+Location/Project: ${leadData.location}
+Platform: ${leadData.platform}
+Questions/Answers: ${JSON.stringify(leadData.questionsAnswers || {})}
+
+Return ONLY a valid JSON object with no markdown formatting, using this structure:
+{
+  "aiScore": <number 0-100>,
+  "aiValidationStatus": "<HOT | WARM | COLD | JUNK>",
+  "aiValidationReason": "<Short reason for the score>"
+}
+
+Rules:
+- HOT: High budget, clear intent, real contact info provided. (Score 80-100)
+- WARM: Missing some info but valid intent. (Score 50-79)
+- COLD: Low intent or very low budget. (Score 20-49)
+- JUNK: Spam, fake names (like 'test'), fake emails/phones. (Score 0-19)
+`;
+    
+    const result = await model.generateContent(prompt);
+    const text = result.response.text().replace(/\`\`\`json/g, '').replace(/\`\`\`/g, '').trim();
+    return JSON.parse(text);
+  } catch (error) {
+    console.error("AI Evaluation failed:", error);
+    return null;
+  }
+}
 
 export async function GET(req: NextRequest) {
   try {
@@ -59,6 +102,13 @@ export async function POST(req: NextRequest) {
         if (salesUsers.length > 0) assignedToId = salesUsers[0].id;
       }
 
+      // Fetch tenant to get business category
+      const tenant = await db.tenant.findUnique({ where: { id: tenantId } });
+      const businessCategory = tenant?.businessCategory || 'GENERAL_CRM';
+
+      // Run AI Evaluation before creating the lead
+      const aiEval = await evaluateLeadQuality(body, businessCategory);
+
       lead = await db.lead.create({
         data: {
           tenantId,
@@ -83,10 +133,11 @@ export async function POST(req: NextRequest) {
           status: body.status || 'NEW',
           firstResponseDeadline: new Date(Date.now() + 10 * 60000),
           
-          // AI Validation Simulation
-          aiScore: (body.fullName?.toLowerCase().includes('test') || body.email?.toLowerCase().includes('test')) ? 12 : 92,
-          aiValidationStatus: (body.fullName?.toLowerCase().includes('test') || body.email?.toLowerCase().includes('test')) ? 'JUNK' : 'HOT',
-          aiValidationReason: (body.fullName?.toLowerCase().includes('test') || body.email?.toLowerCase().includes('test')) ? 'Contains test keywords, likely spam' : 'Valid intent detected by AI'
+          
+          // Generate real AI evaluation
+          aiScore: aiEval?.aiScore ?? ((body.fullName?.toLowerCase().includes('test') || body.email?.toLowerCase().includes('test')) ? 12 : 92),
+          aiValidationStatus: aiEval?.aiValidationStatus ?? ((body.fullName?.toLowerCase().includes('test') || body.email?.toLowerCase().includes('test')) ? 'JUNK' : 'HOT'),
+          aiValidationReason: aiEval?.aiValidationReason ?? ((body.fullName?.toLowerCase().includes('test') || body.email?.toLowerCase().includes('test')) ? 'Contains test keywords, likely spam' : 'Valid intent detected by AI')
         }
       });
       created = true;

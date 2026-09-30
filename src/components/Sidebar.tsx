@@ -38,7 +38,8 @@ import {
   Globe,
   HardHat,
   Boxes,
-  Activity
+  Activity,
+  Bot
 } from 'lucide-react';
 
 export function Sidebar() {
@@ -89,14 +90,31 @@ export function Sidebar() {
       ];
     }
 
-    // Default Real Estate Category Nav
+    if (category === 'REAL_ESTATE') {
+      return [
+        { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
+        { name: 'Ani AI Agent', href: '/ai-agent', icon: Bot },
+        { name: 'Property Inquiries', href: '/leads', icon: Inbox },
+        { name: 'Property Listings', href: '/properties', icon: Building2 },
+        { name: 'Site Visit Scheduler', href: '/site-visits', icon: MapPin },
+        { name: 'Bookings & Advances', href: '/bookings', icon: Key },
+        { name: 'WhatsApp Complete Hub', href: '/whatsapp-hub', icon: MessageSquare },
+        { name: 'Follow-ups', href: '/followups', icon: Clock },
+        { name: 'Campaigns', href: '/campaigns', icon: Megaphone },
+        { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+        { name: 'Reports', href: '/reports', icon: FileSpreadsheet }
+      ];
+    }
+
+    // Default Generic CRM Category Nav
     return [
       { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
-      { name: 'Property Inquiries', href: '/leads', icon: Inbox },
-      { name: 'Property Listings', href: '/properties', icon: Building2 },
-      { name: 'Site Visit Scheduler', href: '/site-visits', icon: MapPin },
-      { name: 'Bookings & Advances', href: '/bookings', icon: Key },
-      { name: 'WhatsApp Complete Hub', href: '/whatsapp-hub', icon: MessageSquare },
+      { name: 'Ani AI Agent', href: '/ai-agent', icon: Bot },
+      { name: 'Lead Inbox', href: '/leads', icon: Inbox },
+      { name: 'Products / Services', href: '/properties', icon: Boxes }, // Using properties route temporarily but labeling generic
+      { name: 'Meetings & Calls', href: '/site-visits', icon: MapPin },
+      { name: 'Orders & Payments', href: '/bookings', icon: Key },
+      { name: 'WhatsApp Hub', href: '/whatsapp-hub', icon: MessageSquare },
       { name: 'Follow-ups', href: '/followups', icon: Clock },
       { name: 'Campaigns', href: '/campaigns', icon: Megaphone },
       { name: 'Analytics', href: '/analytics', icon: BarChart3 },
